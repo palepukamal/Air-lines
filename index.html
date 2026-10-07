@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Airline Overbooking Management System</title>
+
+    <style>
+
+        :root {
+            --bg: #0b1220;
+            --card: #111a2b;
+            --card2: #162238;
+            --border: #263650;
+
+            --text: #e8eef8;
+            --mu: #8fa0b8;
+
+            --pri: #4f8cff;
+            --pri2: #2563eb;
+
+            --ok: #22c55e;
+            --wa: #f59e0b;
+            --er: #ef4444;
+
+            --shadow:
+                0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #09111f,
+                    #0d1728 50%,
+                    #101b30
+                );
+
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: min(1400px, 94%);
+            margin: auto;
+            padding: 25px 0 50px;
+        }
+
+        /* -------------------------------------------------- */
+        /* HEADER */
+        /* -------------------------------------------------- */
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
+            margin-bottom: 25px;
+            padding: 22px 25px;
+
+            background: var(--card);
+
+            border: 1px solid var(--border);
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .brand h1 {
+            margin: 0;
+
+            font-size: 25px;
+            font-weight: 750;
+        }
+
+        .brand p {
+            margin: 7px 0 0;
+
+            color: var(--mu);
+            font-size: 13px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 9px 14px;
+
+            border: 1px solid var(--border);
+            border-radius: 30px;
+
+            font-size: 13px;
+            color: var(--mu);
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+
+            border-radius: 50%;
+
+            background: var(--ok);
+        }
+
+        /* -------------------------------------------------- */
+        /* GRID */
+        /* -------------------------------------------------- */
+
+        .grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    4,
+                    minmax(0, 1fr)
+                );
+
+            gap: 15px;
+
+            margin-bottom: 18px;
+        }
+
+        .grid-2 {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 18px;
+
+            margin-bottom: 18px;
+        }
+
+        /* -------------------------------------------------- */
+        /* CARD */
+        /* -------------------------------------------------- */
+
+        .card {
+            background: var(--card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            margin:
+                0 0 17px;
+
+            font-size: 17px;
+        }
+
+        .card h3 {
+            margin:
+                0 0 12px;
+
+            font-size: 14px;
+        }
+
+        /* -------------------------------------------------- */
+        /* KPI */
+        /* -------------------------------------------------- */
+
+        .kpi {
+            background: var(--card);
+
+            border: 1px solid var(--border);
+
+            border-radius: 16px;
+
+            padding: 18px;
+        }
+
+        .kpi-label {
+            color: var(--mu);
+
+            font-size: 12px;
+
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 27px;
+
+            font-weight: 750;
+        }
+
+        .kpi-sub {
+            margin-top: 5px;
+
+            font-size: 11px;
+
+            color: var(--mu);
+        }
+
+        /* -------------------------------------------------- */
+        /* SETTINGS */
+        /* -------------------------------------------------- */
+
+        .form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+
+            gap: 13px;
+        }
+
+        label {
+            display: block;
+
+            color: var(--mu);
+
+            font-size: 12px;
+
+            margin-bottom: 6px;
+        }
+
+        input,
+        select {
+            width: 100%;
+
+            padding: 11px 12px;
+
+            border-radius: 9px;
+
+            border: 1px solid var(--border);
+
+            background: #0b1525;
+
+            color: var(--text);
+
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--pri);
+        }
+
+        button {
+            border: none;
+
+            border-radius: 9px;
+
+            padding: 11px 16px;
+
+            cursor: pointer;
+
+            background: var(--pri2);
+
+            color: white;
+
+            font-weight: 650;
+
+            transition:
+                transform 0.15s,
+                opacity 0.15s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+
+        button.secondary {
+            background: var(--card2);
+            border: 1px solid var(--border);
+        }
+
+        button.danger {
+            background: var(--er);
+        }
+
+        .button-row {
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            margin-top: 15px;
+        }
+
+        /* -------------------------------------------------- */
+        /* MESSAGE */
+        /* -------------------------------------------------- */
+
+        .msg {
+            margin-top: 12px;
+
+            min-height: 18px;
+
+            font-size: 13px;
+
+            color: var(--mu);
+        }
+
+        /* -------------------------------------------------- */
+        /* TABLE */
+        /* -------------------------------------------------- */
+
+        .ov {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+
+            border-collapse: collapse;
+
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+
+            color: var(--mu);
+
+            font-weight: 600;
+
+            padding: 11px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        td {
+            padding: 12px 11px;
+
+            border-bottom:
+                1px solid
+                rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover td {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.02
+                );
+        }
+
+        /* -------------------------------------------------- */
+        /* TAG */
+        /* -------------------------------------------------- */
+
+        .tag {
+            display: inline-block;
+
+            padding: 4px 8px;
+
+            border-radius: 7px;
+
+            background:
+                rgba(
+                    79,
+                    140,
+                    255,
+                    0.12
+                );
+
+            color: #8bb4ff;
+
+            font-size: 11px;
+        }
+
+        .tag.warning {
+            color: var(--wa);
+
+            background:
+                rgba(
+                    245,
+                    158,
+                    11,
+                    0.12
+                );
+        }
+
+        .tag.danger {
+            color: var(--er);
+
+            background:
+                rgba(
+                    239,
+                    68,
+                    68,
+                    0.12
+                );
+        }
+
+        .tag.success {
+            color: var(--ok);
+
+            background:
+                rgba(
+                    34,
+                    197,
+                    94,
+                    0.12
+                );
+        }
+
+        /* -------------------------------------------------- */
+        /* BOOKING FORM */
+        /* -------------------------------------------------- */
+
+        .booking-form {
+            display: grid;
+
+            grid-template-columns:
+                1.5fr 1fr auto;
+
+            gap: 12px;
+
+            align-items: end;
+        }
+
+        /* -------------------------------------------------- */
+        /* RISK */
+        /* -------------------------------------------------- */
+
+        .risk-box {
+            padding: 18px;
+
+            border-radius: 12px;
+
+            background: var(--card2);
+
+            border: 1px solid var(--border);
+        }
+
+        .risk-title {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .risk-title strong {
+            font-size: 20px;
+        }
+
+        .risk-bar {
+            width: 100%;
+
+            height: 13px;
+
+            background:
+                #07101e;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+
+            width: 0%;
+
+            border-radius: 20px;
+
+            background: var(--ok);
+
+            transition:
+                width 0.4s ease;
+        }
+
+        .risk-details {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    3,
+                    1fr
+                );
+
+            gap: 10px;
+
+            margin-top: 15px;
+        }
+
+        .risk-detail {
+            padding: 10px;
+
+            border-radius: 9px;
+
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.025
+                );
+        }
+
+        .risk-detail span {
+            display: block;
+
+            color: var(--mu);
+
+            font-size: 11px;
+
+            margin-bottom: 4px;
+        }
+
+        /* -------------------------------------------------- */
+        /* CHART */
+        /* -------------------------------------------------- */
+
+        .chart {
+            height: 220px;
+
+            display: flex;
+
+            align-items: flex-end;
+
+            gap: 10px;
+
+            padding:
+                15px 10px 5px;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+        .bar-wrapper {
+            flex: 1;
+
+            height: 100%;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: flex-end;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+        .bar {
+            width: 80%;
+
+            max-width: 70px;
+
+            min-height: 3px;
+
+            border-radius:
+                6px 6px 0 0;
+
+            background: var(--pri);
+
+            transition:
+                height 0.4s ease;
+        }
+
+        .bar-label {
+            font-size: 10px;
+
+            color: var(--mu);
+
+            text-align: center;
+        }
+
+        .bar-value {
+            font-size: 10px;
+        }
+
+        /* -------------------------------------------------- */
+        /* SEARCH */
+        /* -------------------------------------------------- */
+
+        .search-row {
+            display: grid;
+
+            grid-template-columns:
+                1fr auto;
+
+            gap: 10px;
+        }
+
+        /* -------------------------------------------------- */
+        /* FOOTER */
+        /* -------------------------------------------------- */
+
+        footer {
+            text-align: center;
+
+            color: var(--mu);
+
+            font-size: 11px;
+
+            margin-top: 25px;
+        }
+
+        /* -------------------------------------------------- */
+        /* RESPONSIVE */
+        /* -------------------------------------------------- */
+
+        @media (max-width: 1050px) {
+
+            .grid {
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    );
+            }
+
+            .booking-form {
+                grid-template-columns:
+                    1fr 1fr;
+            }
+
+            .booking-form button {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .grid,
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+
+            .risk-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <header>
+
+        <div class="brand">
+
+            <h1>
+                ✈ Airline Overbooking Management
+            </h1>
+
+            <p>
+                Dynamic reservation, seat allocation
+                and bump-risk management system
+            </p>
+
+        </div>
+
+        <div class="status">
+
+            <span
+                class="dot"
+                id="serverDot"
+            ></span>
+
+            <span id="serverStatus">
+                Connecting...
+            </span>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================================================= -->
+    <!-- KPI CARDS -->
+    <!-- ================================================= -->
+
+    <div class="grid">
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Physical Capacity
+            </div>
+
+            <div
+                class="kpi-value"
+                id="capacityKpi"
+            >
+                0
+            </div>
+
+            <div class="kpi-sub">
+                Actual aircraft seats
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Current Bookings
+            </div>
+
+            <div
+                class="kpi-value"
+                id="totalKpi"
+            >
+                0
+            </div>
+
+            <div class="kpi-sub">
+                Active reservations
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Safe Booking Limit
+            </div>
+
+            <div
+                class="kpi-value"
+                id="safeLimitKpi"
+            >
+                0
+            </div>
+
+            <div class="kpi-sub">
+                Risk-controlled maximum
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Seats Still Sellable
+            </div>
+
+            <div
+                class="kpi-value"
+                id="sellableKpi"
+            >
+                0
+            </div>
+
+            <div class="kpi-sub">
+                Remaining safe bookings
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SECOND KPI ROW -->
+    <!-- ================================================= -->
+
+    <div class="grid">
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Physical Seats Available
+            </div>
+
+            <div
+                class="kpi-value"
+                id="availableSeats"
+            >
+                0
+            </div>
+
+            <div class="kpi-sub">
+                Currently unassigned seats
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Blended No-Show
+            </div>
+
+            <div
+                class="kpi-value"
+                id="noShowKpi"
+            >
+                0%
+            </div>
+
+            <div class="kpi-sub">
+                Weighted probability
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Bump Risk
+            </div>
+
+            <div
+                class="kpi-value"
+                id="bumpRiskKpi"
+            >
+                0%
+            </div>
+
+            <div class="kpi-sub">
+                At current safe limit
+            </div>
+
+        </div>
+
+
+        <div class="kpi">
+
+            <div class="kpi-label">
+                Maximum Allowed Risk
+            </div>
+
+            <div
+                class="kpi-value"
+                id="maxRiskKpi"
+            >
+                0%
+            </div>
+
+            <div class="kpi-sub">
+                Configured threshold
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SETTINGS + RISK -->
+    <!-- ================================================= -->
+
+    <div class="grid-2">
+
+        <!-- SETTINGS -->
+
+        <section class="card">
+
+            <h2>
+                ⚙ Dynamic Settings
+            </h2>
+
+            <div class="form-grid">
+
+                <div>
+
+                    <label>
+                        Aircraft Seat Capacity
+                    </label>
+
+                    <input
+                        id="capacityInput"
+                        type="number"
+                        min="1"
+                        placeholder="100"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Maximum Bump Risk (%)
+                    </label>
+
+                    <input
+                        id="riskInput"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="5"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="button-row">
+
+                <button
+                    id="settingsBtn"
+                >
+                    Apply Settings
+                </button>
+
+                <button
+                    class="secondary"
+                    id="estimateBtn"
+                >
+                    Recalculate No-Show
+                </button>
+
+            </div>
+
+
+            <div
+                class="msg"
+                id="settingsMsg"
+            ></div>
+
+        </section>
+
+
+        <!-- RISK -->
+
+        <section class="card">
+
+            <h2>
+                🛡 Safety Status
+            </h2>
+
+            <div class="risk-box">
+
+                <div class="risk-title">
+
+                    <strong id="riskStatus">
+                        SAFE
+                    </strong>
+
+                    <span
+                        class="tag success"
+                        id="riskTag"
+                    >
+                        LOW RISK
+                    </span>
+
+                </div>
+
+
+                <div class="risk-bar">
+
+                    <div
+                        class="risk-fill"
+                        id="riskFill"
+                    ></div>
+
+                </div>
+
+
+                <div class="risk-details">
+
+                    <div class="risk-detail">
+
+                        <span>
+                            Current Risk
+                        </span>
+
+                        <strong
+                            id="riskDetailCurrent"
+                        >
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="risk-detail">
+
+                        <span>
+                            Maximum Risk
+                        </span>
+
+                        <strong
+                            id="riskDetailMax"
+                        >
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <div class="risk-detail">
+
+                        <span>
+                            Safe Limit
+                        </span>
+
+                        <strong
+                            id="riskDetailLimit"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- BOOKING -->
+    <!-- ================================================= -->
+
+    <section class="card">
+
+        <h2>
+            🎫 New Booking
+        </h2>
+
+
+        <div class="booking-form">
+
+            <div>
+
+                <label>
+                    Passenger Name
+                </label>
+
+                <input
+                    id="passengerName"
+                    type="text"
+                    placeholder="Enter passenger name"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Fare Class
+                </label>
+
+                <select id="fareClass">
+
+                    <option value="ECONOMY">
+                        Economy
+                    </option>
+
+                    <option value="BUSINESS">
+                        Business
+                    </option>
+
+                    <option value="FIRST">
+                        First
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                id="bookBtn"
+            >
+                Book Flight
+            </button>
+
+        </div>
+
+
+        <div
+            class="msg"
+            id="bMsg"
+        ></div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- BOOKINGS -->
+    <!-- ================================================= -->
+
+    <section
+        class="card"
+        style="margin-top:18px"
+    >
+
+        <h2>
+            📋 Active Bookings
+        </h2>
+
+
+        <div
+            class="ov"
+            style="
+                max-height:320px;
+                overflow-y:auto;
+            "
+        >
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID
+                        </th>
+
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Seat
+                        </th>
+
+                        <th>
+                            Class
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="bk">
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            style="
+                                color:var(--mu);
+                                text-align:center;
+                            "
+                        >
+                            Loading bookings...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- LOOKUP -->
+    <!-- ================================================= -->
+
+    <section
+        class="card"
+        style="margin-top:18px"
+    >
+
+        <h2>
+            🔎 Booking Lookup
+        </h2>
+
+
+        <div class="search-row">
+
+            <input
+                id="q"
+                type="number"
+                placeholder="Enter booking ID, e.g. 1001"
+            >
+
+            <button
+                id="lookupBtn"
+            >
+                Search
+            </button>
+
+        </div>
+
+
+        <div
+            class="msg"
+            id="qMsg"
+        ></div>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- NO SHOW RATES + FARE DISTRIBUTION -->
+    <!-- ================================================= -->
+
+    <div
+        class="grid-2"
+        style="margin-top:18px"
+    >
+
+        <!-- NO SHOW -->
+
+        <section class="card">
+
+            <h2>
+                📊 No-Show Probability
+            </h2>
+
+
+            <div
+                class="chart"
+                id="noShowChart"
+            ></div>
+
+        </section>
+
+
+        <!-- FARE -->
+
+        <section class="card">
+
+            <h2>
+                💺 Booking Distribution
+            </h2>
+
+
+            <div
+                class="chart"
+                id="fareChart"
+            ></div>
+
+        </section>
+
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- FOOTER -->
+    <!-- ================================================= -->
+
+    <footer>
+
+        Airline Overbooking Management System
+        · Java Reservation Engine
+        · Python No-Show Estimator
+
+    </footer>
+
+</div>
+
+
+<script>
+
+    /* =====================================================
+       HELPERS
+       ===================================================== */
+
+    function $(id) {
+        return document.getElementById(id);
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+
+    function percent(value) {
+
+        return (
+            Number(value || 0) * 100
+        ).toFixed(2) + '%';
+    }
+
+
+    /* =====================================================
+       RENDER STATE
+       ===================================================== */
+
+    function renderState(data) {
+
+        if (!data) {
+            return;
+        }
+
+
+        /* -------------------------------------------------
+           KPI
+           ------------------------------------------------- */
+
+        $('capacityKpi').textContent =
+            data.capacity;
+
+        $('totalKpi').textContent =
+            data.total;
+
+        $('safeLimitKpi').textContent =
+            data.safeLimit;
+
+        $('sellableKpi').textContent =
+            data.sellable;
+
+        $('availableSeats').textContent =
+            data.availableSeats;
+
+        $('noShowKpi').textContent =
+            percent(data.blendedNoShow);
+
+        $('bumpRiskKpi').textContent =
+            percent(data.bumpRiskAtLimit);
+
+        $('maxRiskKpi').textContent =
+            percent(data.maxRisk);
+
+
+        /* -------------------------------------------------
+           SETTINGS INPUTS
+           ------------------------------------------------- */
+
+        $('capacityInput').value =
+            data.capacity;
+
+        $('riskInput').value =
+            (
+                Number(data.maxRisk) * 100
+            ).toFixed(2);
+
+
+        /* -------------------------------------------------
+           SAFETY
+           ------------------------------------------------- */
+
+        const currentRisk =
+            Number(
+                data.bumpRiskAtLimit || 0
+            );
+
+        const maximumRisk =
+            Number(
+                data.maxRisk || 0
+            );
+
+
+        $('riskDetailCurrent').textContent =
+            percent(currentRisk);
+
+        $('riskDetailMax').textContent =
+            percent(maximumRisk);
+
+        $('riskDetailLimit').textContent =
+            data.safeLimit;
+
+
+        let riskPercentage = 0;
+
+        if (maximumRisk > 0) {
+
+            riskPercentage =
+                (
+                    currentRisk /
+                    maximumRisk
+                ) * 100;
+        }
+
+        riskPercentage =
+            Math.min(
+                100,
+                Math.max(
+                    0,
+                    riskPercentage
+                )
+            );
+
+
+        $('riskFill').style.width =
+            riskPercentage + '%';
+
+
+        if (currentRisk > maximumRisk) {
+
+            $('riskStatus').textContent =
+                'UNSAFE';
+
+            $('riskTag').textContent =
+                'HIGH RISK';
+
+            $('riskTag').className =
+                'tag danger';
+
+        }
+
+        else if (
+            maximumRisk > 0 &&
+            currentRisk >=
+                maximumRisk * 0.8
+        ) {
+
+            $('riskStatus').textContent =
+                'CAUTION';
+
+            $('riskTag').textContent =
+                'MEDIUM RISK';
+
+            $('riskTag').className =
+                'tag warning';
+
+        }
+
+        else {
+
+            $('riskStatus').textContent =
+                'SAFE';
+
+            $('riskTag').textContent =
+                'LOW RISK';
+
+            $('riskTag').className =
+                'tag success';
+        }
+
+
+        /* -------------------------------------------------
+           BOOKINGS
+           ------------------------------------------------- */
+
+        const bookings =
+            Array.isArray(data.bookings)
+                ? data.bookings
+                : [];
+
+
+        $('bk').innerHTML =
+
+            bookings
+                .map(
+                    b => `
+
+                    <tr>
+
+                        <td>
+                            ${b.id}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(b.name)}
+                        </td>
+
+                        <td>
+
+                            ${
+                                b.seat
+                                    ? `
+                                        <span class="tag">
+                                            Seat ${b.seat}
+                                        </span>
+                                      `
+                                    : `
+                                        <span
+                                            class="tag warning"
+                                        >
+                                            OVERBOOKED
+                                        </span>
+                                      `
+                            }
+
+                        </td>
+
+                        <td>
+
+                            <span class="tag">
+                                ${escapeHtml(b.fare)}
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="#"
+                                class="cancel-booking"
+                                data-id="${b.id}"
+                                style="
+                                    color:var(--er);
+                                    text-decoration:none;
+                                    font-weight:600;
+                                "
+                            >
+                                cancel
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                `
+                )
+                .join('')
+
+            ||
+
+            `
+                <tr>
+
+                    <td
+                        colspan="5"
+                        style="
+                            color:var(--mu);
+                            text-align:center;
+                        "
+                    >
+                        No bookings yet
+                    </td>
+
+                </tr>
+            `;
+
+
+        /* -------------------------------------------------
+           CHARTS
+           ------------------------------------------------- */
+
+        renderNoShowChart(
+            data.history || {}
+        );
+
+        renderFareChart(
+            data.partitions || {}
+        );
+
+
+        /* -------------------------------------------------
+           SERVER STATUS
+           ------------------------------------------------- */
+
+        $('serverStatus').textContent =
+            'Server connected';
+
+        $('serverDot').style.background =
+            'var(--ok)';
+    }
+
+
+    /* =====================================================
+       NO SHOW CHART
+       ===================================================== */
+
+    function renderNoShowChart(history) {
+
+        const classes = [
+            'ECONOMY',
+            'BUSINESS',
+            'FIRST'
+        ];
+
+
+        const values =
+            classes.map(
+                fare =>
+                    Number(
+                        history[fare] || 0
+                    )
+            );
+
+
+        const max =
+            Math.max(
+                ...values,
+                0.01
+            );
+
+
+        $('noShowChart').innerHTML =
+
+            classes
+                .map(
+                    (fare, index) => {
+
+                        const value =
+                            values[index];
+
+                        const height =
+                            Math.max(
+                                3,
+                                (
+                                    value /
+                                    max
+                                ) * 170
+                            );
+
+
+                        return `
+
+                            <div class="bar-wrapper">
+
+                                <div
+                                    class="bar-value"
+                                >
+                                    ${percent(value)}
+                                </div>
+
+                                <div
+                                    class="bar"
+                                    style="
+                                        height:
+                                            ${height}px;
+                                    "
+                                ></div>
+
+                                <div
+                                    class="bar-label"
+                                >
+                                    ${fare}
+                                </div>
+
+                            </div>
+
+                        `;
+                    }
+                )
+                .join('');
+    }
+
+
+    /* =====================================================
+       FARE DISTRIBUTION CHART
+       ===================================================== */
+
+    function renderFareChart(partitions) {
+
+        const classes = [
+            'ECONOMY',
+            'BUSINESS',
+            'FIRST'
+        ];
+
+
+        const values =
+            classes.map(
+                fare =>
+                    Number(
+                        partitions[fare] || 0
+                    )
+            );
+
+
+        const max =
+            Math.max(
+                ...values,
+                1
+            );
+
+
+        $('fareChart').innerHTML =
+
+            classes
+                .map(
+                    (fare, index) => {
+
+                        const value =
+                            values[index];
+
+                        const height =
+                            Math.max(
+                                3,
+                                (
+                                    value /
+                                    max
+                                ) * 170
+                            );
+
+
+                        return `
+
+                            <div class="bar-wrapper">
+
+                                <div
+                                    class="bar-value"
+                                >
+                                    ${value}
+                                </div>
+
+                                <div
+                                    class="bar"
+                                    style="
+                                        height:
+                                            ${height}px;
+                                    "
+                                ></div>
+
+                                <div
+                                    class="bar-label"
+                                >
+                                    ${fare}
+                                </div>
+
+                            </div>
+
+                        `;
+                    }
+                )
+                .join('');
+    }
+
+
+    /* =====================================================
+       LOAD STATE
+       ===================================================== */
+
+    async function loadState() {
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/state'
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Server returned '
+                    + response.status
+                );
+            }
+
+
+            const data =
+                await response.json();
+
+
+            renderState(data);
+
+        }
+
+        catch (error) {
+
+            $('serverStatus').textContent =
+                'Server disconnected';
+
+            $('serverDot').style.background =
+                'var(--er)';
+
+            console.error(error);
+        }
+    }
+
+
+    /* =====================================================
+       APPLY SETTINGS
+       ===================================================== */
+
+    $('settingsBtn')
+        .addEventListener(
+            'click',
+            async function() {
+
+                const capacity =
+                    Number(
+                        $('capacityInput').value
+                    );
+
+
+                const riskPercent =
+                    Number(
+                        $('riskInput').value
+                    );
+
+
+                if (
+                    !capacity ||
+                    capacity < 1
+                ) {
+
+                    $('settingsMsg').style.color =
+                        'var(--er)';
+
+                    $('settingsMsg').textContent =
+                        'Capacity must be at least 1.';
+
+                    return;
+                }
+
+
+                if (
+                    riskPercent < 0 ||
+                    riskPercent > 100
+                ) {
+
+                    $('settingsMsg').style.color =
+                        'var(--er)';
+
+                    $('settingsMsg').textContent =
+                        'Risk must be between 0% and 100%.';
+
+                    return;
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            '/api/settings',
+                            {
+                                method: 'POST',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json'
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        capacity:
+                                            capacity,
+
+                                        maxRisk:
+                                            riskPercent /
+                                            100
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.error ||
+                            'Unable to update settings'
+                        );
+                    }
+
+
+                    $('settingsMsg').style.color =
+                        'var(--ok)';
+
+                    $('settingsMsg').textContent =
+                        'Settings updated successfully. '
+                        + 'All risk calculations were recalculated.';
+
+
+                    renderState(data);
+
+                }
+
+                catch (error) {
+
+                    $('settingsMsg').style.color =
+                        'var(--er)';
+
+                    $('settingsMsg').textContent =
+                        error.message;
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       RECALCULATE NO SHOW
+       ===================================================== */
+
+    $('estimateBtn')
+        .addEventListener(
+            'click',
+            async function() {
+
+                try {
+
+                    $('settingsMsg').style.color =
+                        'var(--mu)';
+
+                    $('settingsMsg').textContent =
+                        'Running Python estimator...';
+
+
+                    const response =
+                        await fetch(
+                            '/api/estimate',
+                            {
+                                method: 'POST'
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.error ||
+                            'Estimator failed'
+                        );
+                    }
+
+
+                    renderState(data);
+
+
+                    $('settingsMsg').style.color =
+                        'var(--ok)';
+
+                    $('settingsMsg').textContent =
+                        'No-show probabilities updated.';
+
+                }
+
+                catch (error) {
+
+                    $('settingsMsg').style.color =
+                        'var(--er)';
+
+                    $('settingsMsg').textContent =
+                        error.message;
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       BOOK PASSENGER
+       ===================================================== */
+
+    $('bookBtn')
+        .addEventListener(
+            'click',
+            async function() {
+
+                const name =
+                    $('passengerName')
+                        .value
+                        .trim();
+
+
+                const fare =
+                    $('fareClass')
+                        .value;
+
+
+                if (!name) {
+
+                    $('bMsg').style.color =
+                        'var(--er)';
+
+                    $('bMsg').textContent =
+                        'Please enter passenger name.';
+
+                    return;
+                }
+
+
+                try {
+
+                    $('bMsg').style.color =
+                        'var(--mu)';
+
+                    $('bMsg').textContent =
+                        'Processing booking...';
+
+
+                    const response =
+                        await fetch(
+                            '/api/book',
+                            {
+                                method: 'POST',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json'
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        name:
+                                            name,
+
+                                        fare:
+                                            fare
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.error ||
+                            'Booking failed'
+                        );
+                    }
+
+
+                    renderState(
+                        data.state
+                    );
+
+
+                    const booking =
+                        data.booking;
+
+
+                    if (
+                        booking &&
+                        booking.seat
+                    ) {
+
+                        $('bMsg').style.color =
+                            'var(--ok)';
+
+                        $('bMsg').textContent =
+                            'Booking successful. '
+                            + 'ID: '
+                            + booking.id
+                            + ' · Seat: '
+                            + booking.seat;
+
+                    }
+
+                    else {
+
+                        $('bMsg').style.color =
+                            'var(--wa)';
+
+                        $('bMsg').textContent =
+                            'Booking successful. '
+                            + 'ID: '
+                            + booking.id
+                            + ' · Passenger is OVERBOOKED '
+                            + 'until a seat becomes available.';
+                    }
+
+
+                    /*
+                     * Clear passenger name.
+                     */
+                    $('passengerName').value =
+                        '';
+
+                }
+
+                catch (error) {
+
+                    $('bMsg').style.color =
+                        'var(--er)';
+
+                    $('bMsg').textContent =
+                        error.message;
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       CANCEL BOOKING
+       ===================================================== */
+
+    $('bk')
+        .addEventListener(
+            'click',
+            async function(event) {
+
+                const target =
+                    event.target.closest(
+                        '.cancel-booking'
+                    );
+
+
+                if (!target) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                const id =
+                    Number(
+                        target.dataset.id
+                    );
+
+
+                if (!id) {
+                    return;
+                }
+
+
+                const confirmed =
+                    confirm(
+                        'Cancel booking ID '
+                        + id
+                        + '?'
+                    );
+
+
+                if (!confirmed) {
+                    return;
+                }
+
+
+                try {
+
+                    $('bMsg').style.color =
+                        'var(--mu)';
+
+                    $('bMsg').textContent =
+                        'Cancelling booking...';
+
+
+                    const response =
+                        await fetch(
+                            '/api/cancel',
+                            {
+                                method: 'POST',
+
+                                headers: {
+                                    'Content-Type':
+                                        'application/json'
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        id:
+                                            id
+                                    })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            data.error ||
+                            'Cancellation failed'
+                        );
+                    }
+
+
+                    renderState(
+                        data.state
+                    );
+
+
+                    $('bMsg').style.color =
+                        'var(--ok)';
+
+                    $('bMsg').textContent =
+                        'Booking ID '
+                        + id
+                        + ' cancelled successfully.';
+
+                }
+
+                catch (error) {
+
+                    $('bMsg').style.color =
+                        'var(--er)';
+
+                    $('bMsg').textContent =
+                        error.message;
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       BOOKING LOOKUP
+       ===================================================== */
+
+    async function lookupBooking() {
+
+        const id =
+            Number(
+                $('q').value
+            );
+
+
+        if (!id) {
+
+            $('qMsg').style.color =
+                'var(--er)';
+
+            $('qMsg').textContent =
+                'Enter a booking ID.';
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/find?id='
+                    + encodeURIComponent(id)
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.error ||
+                    'Booking not found'
+                );
+            }
+
+
+            const seatText =
+                data.seat
+                    ? 'Seat ' + data.seat
+                    : 'OVERBOOKED';
+
+
+            $('qMsg').style.color =
+                'var(--ok)';
+
+            $('qMsg').textContent =
+                data.name
+                + ' · '
+                + seatText
+                + ' · '
+                + data.fare;
+
+        }
+
+        catch (error) {
+
+            $('qMsg').style.color =
+                'var(--er)';
+
+            $('qMsg').textContent =
+                error.message;
+        }
+
+    }
+
+
+    $('lookupBtn')
+        .addEventListener(
+            'click',
+            lookupBooking
+        );
+
+
+    $('q')
+        .addEventListener(
+            'keydown',
+            function(event) {
+
+                if (
+                    event.key === 'Enter'
+                ) {
+
+                    lookupBooking();
+                }
+
+            }
+        );
+
+
+    /* =====================================================
+       INITIAL LOAD
+       ===================================================== */
+
+    loadState();
+
+</script>
+
+</body>
+
+</html>
